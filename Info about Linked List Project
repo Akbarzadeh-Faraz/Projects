@@ -1,0 +1,48 @@
+For this project, we will build a specialized list data structure.
+The lists must hold elements of the primitive type byte; duplicate elements are allowed. The only list operations
+that we will use, are the lengthIs operation and the iterator operations. We are going to need to process elements
+from left-to-right and from right-to-left, so we need to support two iterators. In addition, we are going to need to
+insert items at the front and at the back of our lists.
+The unique requirement for the SpecializedList is that we are able to traverse it either frontward or backward.
+Because a doubly linked list is linked in both directions, traversing the list either way is equally simple. Therefore,
+we use a reference-based doubly linked structure for our implementation. To begin our backward traversals, and to
+support the new insertEnd operation, it is clear that we need easy access to the end of a list. We have already seen
+how keeping the list reference pointing to the last element in a circular structure gives direct access to both the front
+element and the last element. So, we could use a doubly linked circular structure. However, another approach is also
+possible. We can maintain two list references, one for the front of the list and one for the back of the list. We use this
+approach in figure below. We use a doubly linked reference based approach, with instance variables to track the first
+list element, the last list element, the number of items on the list, and the positions for both the forward traversal
+and the backward traversal. Note that the info attribute of the SListNode class holds a value of the primitive byte
+type, as was discussed above
+The range of numbers supported by Java, would seem to suffice for most applications that we might want to write.
+However, even given that large range of integers, some programmer is bound to want to represent integers with larger
+values. Let’s design and implement a class LargeInt that allows the client programmer to manipulate integers in which
+the number of digits is only limited by the size of the available memory. Class LargeInt will have a constructor that accepts
+one argument of type String. Your constructor must be prepared to accept both positive and negative values (+ or -, and
+assume no sign means positive). Because we are providing an alternate implementation for a mathematical object, an
+integer number, most of the operations are already specified: addition, subtraction, multiplication, division,
+assignment, and the relational operators. For this assignment, we limit our attention to addition (add) and subtraction
+(subtract). We will also need a way to change a LargeInt's sign (positive + or negative - ) if desired (setNegative).
+Additionally, we must have an observer operation that returns a string representation of the large integer. We follow
+the Java convention and call this operation toString.
+So, based on the description as well as the diagrams provided, and some further details here, these are
+the details of LargeInt:
+- Implements LargeIntInterface (per above)
+- Constructor takes one argument of type String
+- Constructor can handle positive and negative values (+, -, and no sign i.e. positive)
+Note: we are not expecting that inputs will have commas.
+- Implements the three abstract methods that you declared in LargeIntInterface: add, subtract,
+setNegative
+- add and subtract have one argument for LargeInt, and returns LargeInt.
+So add is z = x + y where z is the return value, and y is the argument.
+subtract is z = x - y where z is the return value, and y is the argument.
+- setNegative has no argument and doesn't return anything
+- toString should return a String representation of the LargeInt.
+Note: don't print out the + character for positive integers. We only need the sign for negative integers.
+If your integer is negative, you should have the - character in front of the numerical value.
+If your integer is positive or zero, do not put any sign character ( + or - ) in front of the numerical value.
+Commas for large numbers (ex. 1,000,000) are not required.
+- underlying structure must be SpecializedList (i.e. declare an instance inside LargeInt). Do not
+extend SpecializedList.
+- LargeInt may use doubly linked nodes, unlike the diagram above
+- LargeInt nodes do not need to store more than one digit
