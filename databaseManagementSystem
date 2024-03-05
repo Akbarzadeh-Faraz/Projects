@@ -1,0 +1,361 @@
+#include <stdio.h>
+#include <ctype.h>  // for tolower()
+#include <string.h>
+#include <stdlib.h>
+
+#define SIZE 30
+#define fieldLength 100
+
+struct db_type
+{
+   char name[fieldLength];
+   int age;
+   float fare;
+   char embark[fieldLength] ;
+   char class[fieldLength] ;
+};
+
+ 
+char prompt_menu(void);
+void enterNew(struct db_type * pArr[]);  
+void init_list(struct db_type * pArr[]); 
+void displayDB(struct db_type * pArr[]);   
+void sortDB(struct db_type * pArr[]);
+void updateRecord(struct db_type * pArr[]); 
+void removeRecord(struct db_type * pArr[]);
+void clearDB(struct db_type * pArr[]);
+
+
+int main(int argc, char *argv[])
+{
+    
+    struct db_type * db_pArr[SIZE];  // main db storage
+
+    init_list(db_pArr);  // set to NULL
+    
+    char choice;
+    for(; ;){
+      choice = prompt_menu();
+      switch (choice)
+      {
+         case 'n': enterNew(db_pArr); break;
+         case 'd': displayDB(db_pArr); break;
+        
+         case 's': sortDB(db_pArr); break;
+	   
+         case 'c': clearDB(db_pArr); break;  
+        
+         case 'u': updateRecord(db_pArr); break;
+         case 'r': removeRecord(db_pArr);break;
+         
+         case 'q': exit(1); // terminate the whole program
+       }
+	
+     }
+     return 0;
+}
+
+
+char prompt_menu(void){
+  char s[80];
+  while(1){
+    printf("\n-----------------------------------------------------------------\n");
+    printf("|    %-20s","(N)ew record");
+    printf("%-20s","(R)emove record");
+    printf("(U)pdate record\t|\n");
+    printf("|    %-20s","(S)ort database");
+    printf("%-20s","(C)lear database");
+    printf("(D)isplay database\t|\n");
+  
+    printf("|    %-20s","(Q)uit");
+    printf("*Case Insensitive*\t\t\t|\n");
+    printf("-----------------------------------------------------------------\n");
+    printf("choose one: ");
+  
+    fgets(s,50, stdin); // \n added
+    
+    if (strlen(s) == 2 && strchr("edlsuqrcwnvpr", tolower(*s))) 
+       return tolower(*s); // s[0], return the first character of s  
+    //else
+    printf("not a valid input!\n");
+	 
+ }
+}
+
+
+void init_list(struct db_type * pArr[]){
+  int t;
+  for (t=0; t<SIZE; t++)
+  { 
+     pArr[t]= NULL;
+  }
+}
+
+/* clear database, deleting all the records in the database */
+void clearDB(struct db_type * pArr[]){
+   char yn[3];
+   printf("are you sure to clear database? (y) or (n)? ");
+    
+   fgets(yn,3,stdin);
+   
+   // complete the function by calling init_list();
+   if(yn[0] == 'y') {
+     for(int t = 0; t < SIZE; t++)
+       if(pArr[t])
+	 free(pArr[t]);
+     init_list(pArr);
+   }
+}
+
+
+/* input a new record into the database */
+/* hint: need malloc */
+void enterNew(struct db_type * pArr[SIZE])
+{  
+  struct db_type *entry = malloc(sizeof(struct db_type));
+  printf("name: ");
+  fgets(entry->name, fieldLength, stdin);
+  entry->name[strlen(entry->name) - 1] = '\0';
+
+  printf("age: ");
+  scanf("%d", &entry->age);
+  fgetc(stdin);
+
+  printf("embark port: ");
+  fgets(entry->embark, fieldLength, stdin);
+  entry->embark[strlen(entry->embark) - 1] = '\0';
+
+  printf("fare ($): ");
+  scanf("%f", &entry->fare);
+  fgetc(stdin);
+
+
+
+  if(strcmp(entry->embark, "Cherbourg") == 0){
+    if(entry->fare < 9){
+      strcpy(entry->class, "Economic");
+    }
+    else if(entry->fare >= 9 && entry->fare < 30){
+      strcpy(entry->class, "LowerMiddle");
+    }
+    else if(entry->fare >= 30 && entry->fare < 100){
+      strcpy(entry->class, "Middle");
+    }
+    else if(entry->fare >= 100 && entry->fare < 200){
+      strcpy(entry->class, "UpperMiddle");
+    }
+    else{
+      strcpy(entry->class, "Wealthy");
+    }
+  }
+  /*------------------------------------------------------------------------------*/
+
+  else if(strcmp(entry->embark, "Queenstown") == 0){
+    if(entry->fare < 7){
+      strcpy(entry->class, "Economic");
+    }
+    else if(entry->fare >= 7 && entry->fare < 18){
+      strcpy(entry->class, "LowerMiddle");
+    }
+    else if(entry->fare >= 18 && entry->fare < 76){
+      strcpy(entry->class, "Middle");
+    }
+    else if(entry->fare >= 76 && entry->fare < 150){
+      strcpy(entry->class, "UpperMiddle");
+    }
+    else{
+      strcpy(entry->class, "Wealthy");
+    }
+  }
+  /*------------------------------------------------------------------------------*/
+  
+  else if(strcmp(entry->embark, "Southampton") == 0){
+    if(entry->fare < 8){
+      strcpy(entry->class, "Economic");
+    }
+    else if(entry->fare >= 8 && entry->fare < 24){
+      strcpy(entry->class, "LowerMiddle");
+    }
+    else if(entry->fare >= 24 && entry->fare < 80){
+      strcpy(entry->class, "Middle");
+    }
+    else if(entry->fare >= 80 && entry->fare < 180){
+      strcpy(entry->class, "UpperMiddle");
+    }
+    else{
+      strcpy(entry->class, "Wealthy");
+    }
+  }
+  /*------------------------------------------------------------------------------*/
+
+  else{
+    printf("INVALID PORT NAME!!!!!\n");
+  }
+  
+  for(int t = 0; t < SIZE; t++){
+    if(pArr[t] == NULL){
+      pArr[t] = entry;
+      return;
+    }
+  }
+  
+}
+
+
+/* remove an existing item from the database */
+void updateRecord (struct db_type * pArr[])	
+{
+  char name[fieldLength];
+  int newFare;
+   printf("enter full name to search: ");
+   fgets(name, fieldLength, stdin);
+   name[strlen(name) - 1] = '\0';
+   for(int t = 0; t < SIZE; t++){
+     if(pArr[t] == NULL)
+       continue;
+     if(strcmp(pArr[t]->name, name) == 0){
+       printf("record found, enter new fare ($): ");
+       scanf("%d", &newFare);
+       fgetc(stdin);
+
+       if(strcmp(pArr[t]->embark, "Cherbourg") == 0){
+       if(newFare < 9){
+	    strcat(pArr[t]->class, " -> Economic");
+       }
+       else if(newFare >= 9 && newFare < 30){
+            strcat(pArr[t]->class, " -> LowerMiddle");
+       }
+       else if(newFare >= 30 && newFare < 100){
+            strcat(pArr[t]->class, " -> Middle");
+       }
+       else if(newFare >= 100 && newFare < 200){
+            strcat(pArr[t]->class, " -> UpperMiddle");
+       }
+       else{
+            strcat(pArr[t]->class, " -> Wealthy");
+       }
+       }
+
+
+       
+       else if(strcmp(pArr[t]->embark, "Queenstown") == 0){
+       if(newFare < 7){
+	    strcat(pArr[t]->class, " -> Economic");
+       }
+       else if(newFare >= 7 && newFare < 18){
+            strcat(pArr[t]->class, " -> LowerMiddle");
+       }
+       else if(newFare >= 18 && newFare < 76){
+            strcat(pArr[t]->class, " -> Middle");
+       }
+       else if(newFare >= 76 && newFare < 150){
+            strcat(pArr[t]->class, " -> UpperMiddle");
+       }
+       else{
+            strcat(pArr[t]->class, " -> Wealthy");
+       }
+       }
+
+
+       else{
+       if(newFare < 8){
+	    strcat(pArr[t]->class, " -> Economic");
+       }
+       else if(newFare >= 8 && newFare < 24){
+            strcat(pArr[t]->class, " -> LowerMiddle");
+       }
+       else if(newFare >= 24 && newFare < 80){
+            strcat(pArr[t]->class, " -> Middle");
+       }
+       else if(newFare >= 80 && newFare < 180){
+            strcat(pArr[t]->class, " -> UpperMiddle");
+       }
+       else{
+            strcat(pArr[t]->class, " -> Wealthy");
+       }
+       }
+
+	
+	  printf("record [%s] updated successfully.\n", name);
+	  return;
+       }
+     }
+   printf("record not found!\n");
+}
+
+/* display all the records in the database. Generate output with the same formaing as the sample output.
+ use \t to align well
+*/
+void displayDB(struct db_type * pArr[]){
+  
+  int t;
+  int records = 0;
+  printf("===============================\n");
+  for (t=0; t <SIZE ; t++)
+  {
+     if( pArr[t] != NULL)
+     {
+       records++;
+        printf("\nname:\t%s",  (*pArr[t]).name );  // pArr[t] -> name
+        printf("\nage:\t%d", pArr[t]->age);
+	printf("\nembark:\t%s", pArr[t]->embark);
+	printf("\nfare:\t%.1f", pArr[t]->fare);
+	printf("\nclass:\t%s\n", pArr[t]->class);
+     }
+  }
+  printf("\n========== %d records ==========\n", records);
+ 
+}
+
+
+ /* modify an existing record */
+void removeRecord (struct db_type * pArr[])	{
+  
+  char name[fieldLength]; 
+  printf("enter full name to remove: ");
+  fgets(name, fieldLength, stdin);
+  name[strlen(name) - 1] = '\0';
+
+  for(int t = 0; t < SIZE; t++){
+    if(pArr[t] == NULL){
+      continue;
+    }
+    if(strcmp(pArr[t]->name, name) == 0){
+      free(pArr[t]);
+      pArr[t] = NULL;
+      printf("record [%s] removed successfully.\n", name);
+      return;
+    }
+  }
+  printf("record not found!\n");
+   
+}
+
+ 
+// sort the record, either by name or fare, prompting use for choice
+void sortDB(struct db_type * pArr[])
+{
+  char nf[3];
+  printf("sort by name (n) or fare (f)? ");
+  fgets(nf, 3, stdin);
+
+  for(int i = 0; i < SIZE; i++){
+    int j = i + 1;
+    while((pArr[i] == NULL) && (j < SIZE))
+      pArr[i] = pArr[j++];
+  }
+
+  for(int i = 0; i < SIZE; i++)
+    for(int j = i + 1; j < SIZE; j++)
+      {
+	if((pArr[i] == NULL) || (pArr[j] == NULL))
+	  continue;
+	if(((nf[0] == 'n') && (strcmp(pArr[i]->name, pArr[j]->name) > 0)) || ((nf[0] == 'f') && (pArr[i]->fare > pArr[j]->fare))){
+	  struct db_type *tmp = pArr[i];
+	  pArr[i] = pArr[j];
+	  pArr[j] = tmp;
+	}
+      }
+  
+}
+
