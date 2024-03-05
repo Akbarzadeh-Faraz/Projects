@@ -1,0 +1,109 @@
+package a1;
+
+public class SpecializedList implements SpecializedListInterface {
+    private class SListNode {
+        byte info;
+        SListNode next;
+        SListNode prev;
+
+        SListNode(byte info) {
+            this.info = info;
+            next = null;
+            prev = null;
+        }
+    }
+
+    private SListNode head;
+    private SListNode tail;
+    private SListNode currentForward;
+    private SListNode currentBackward;
+    private int size;
+
+    public SpecializedList() {
+        head = null;
+        tail = null;
+        currentForward = null;
+        currentBackward = null;
+        size = 0;
+    }
+
+    public void resetForward() {
+        currentForward = head;
+    }
+
+    public byte getNextItem() {
+        if (currentForward == null) {
+            throw new IllegalStateException("No current forward position");
+        }
+
+        byte item = currentForward.info;
+        currentForward = currentForward.next;
+
+        if (currentForward == null) {
+            currentForward = head;
+        }
+
+        return item;
+    }
+
+    public void resetBackward() {
+        currentBackward = tail;
+    }
+
+    public byte getPriorItem() {
+        if (currentBackward == null) {
+            throw new IllegalStateException("No current backward position");
+        }
+
+        byte item = currentBackward.info;
+        currentBackward = currentBackward.prev;
+
+        if (currentBackward == null) {
+            currentBackward = tail;
+        }
+
+        return item;
+    }
+
+    public int lengthIs() {
+        return size;
+    }
+
+    public void insertFront(byte item) {
+        SListNode newNode = new SListNode(item);
+
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
+            newNode.next = newNode;
+            newNode.prev = newNode;
+        } else {
+            newNode.next = head;
+            newNode.prev = tail;
+            head.prev = newNode;
+            tail.next = newNode;
+            head = newNode;
+        }
+
+        size++;
+    }
+
+    public void insertEnd(byte item) {
+        SListNode newNode = new SListNode(item);
+
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
+            newNode.next = newNode;
+            newNode.prev = newNode;
+        } else {
+            newNode.next = head;
+            newNode.prev = tail;
+            head.prev = newNode;
+            tail.next = newNode;
+            tail = newNode;
+        }
+
+        size++;
+    }
+}
