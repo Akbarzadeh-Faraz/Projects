@@ -1,8 +1,0 @@
-package a1;
-
-public interface LargeIntInterface {
-	public LargeInt add(LargeInt num);
-	public LargeInt subtract(LargeInt num);
-	public void setNegative();
-	public String toString();
-	}
